@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sklep 4TP</title>
+</head>
+<body>
+    <table>
+    {% for nazwa, cena in ceny.items() %}
+     <tr><td>{{ nazwa }}</td><td>{{ cena }} zł</td></tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sklep 4TP</title>
+</head>
+<body>
+    <ul>
+    {% for p in produkty %}
+     <li>{{ loop.index }}. {{ p }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

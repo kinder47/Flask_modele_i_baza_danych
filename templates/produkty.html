@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sklep 4TP</title>
+</head>
+<body>
+    <h1>Produkty ({{ produkty|length }})</h1>
+    <table>
+     <tr><th>#</th><th>Nazwa</th><th>Cena</th><th>Status</th></tr>
+    {% for p in produkty %}
+     <tr>
+     <td>{{ loop.index }}</td>
+     <td>
+     <a href="{{ url_for('produkty', id=p.id) }}">{{ p.nazwa }}</a>
+     </td>
+     <td>{{ p.cena }} zł</td>
+     <td>{% if p.dostepny %}dostępny{% else %}<b>brak</b>{% endif %}</td>
+     </tr>
+    {% endfor %}
+    </table>
+
+{% extends "base.html" %}
+
+{% block tytul %}Produkty - Sklep 4TP{% endblock %}
+
+{% block tresc %}
+<h1>Produkty</h1>
+<table> ... </table>
+{% endblock %}
+
+</body>
+</html>
