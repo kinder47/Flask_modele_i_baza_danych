@@ -23,59 +23,55 @@ class produkt(db.Model):
     def __repr__(self):
         return f"<Produkt {self.nazwa}>"
 
-@app.route("/")
-def lista():
-    produkty = Produkt.query.order_by(Produkt.nazwa).all()
-    return render_template("lista.html", produkty=produkty)
+@app.route("/produkt")
+def produkty():
+    return render_template("produkty.html", p=produkt)
 
-@app.route("/produkt/<int:id>")
+@app.route("/")
+def lista(produkt=None):
+    produkt = produkt.query.order_by(produkt.nazwa).all()
+    return render_template("lista.html", produkt=produkt)
+
+@app.route("/Produkt/<int:id>")
 def szczegoly(id):
-    p = Produkt.query.get_or_404(id)
-    return render_template("produkt.html", p=p)
+    p = produkt.query.get_or_404(id)
+    return render_template("Produkt.html", p=p)
+
 
 @app.route("/dodaj", methods=["GET", "POST"])
 def dodaj():
     if request.method == "POST":
-        p = Produkt(nazwa=request.form["nazwa"],
-                    cena=float(request.form["cena"]))
+        p = produkt(
+            nazwa=request.form["nazwa"],
+            cena=float(request.form["cena"])
+        )
         db.session.add(p)
         db.session.commit()
-        return redirect(url_for("lista"))
+        return redirect(url_for("lista"))  # <-- TUTAJ zmienione z "produkty" na "lista"
+
     return render_template("dodaj.html")
+
 
 @app.route("/usun/<int:id>", methods=["POST"])
 def usun(id):
-    p = Produkt.query.get_or_404(id)
+    p = produkt.query.get_or_404(id)
     db.session.delete(p)
     db.session.commit()
     return redirect(url_for("lista"))
-
 
 # zadanie 3
 
 # zadanie 4
 
 # zadanie 6
+
 @app.route("/szukaj")
 def szukaj():
     q = request.args.get("q", "")
-    wyniki = [p for p in PRODUKTY if q.lower() in p["nazwa"].lower()]
+    wyniki = [p for p in produkt if q.lower() in p["nazwa"].lower()]
     return render_template("szukaj.html", q=q, wyniki=wyniki)
 
 # zadanie 7
-
-@app.route("/dodaj", methods=["GET", "POST"])
-def dodaj():
-    if request.method == "POST":
-        nowy = {
-            "id": len(PRODUKTY) + 1,
-            "nazwa": request.form["nazwa"],
-            "cena": float(request.form["cena"]),
-            "dostepny": True,
-        }
-        PRODUKTY.append(nowy)
-        return redirect(url_for("produkty"))
-    return render_template("dodaj.html")
 
 with app.app_context():
     db.create_all()
