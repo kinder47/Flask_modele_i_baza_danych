@@ -1,19 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sklep.db"
+db = SQLAlchemy(app)
+
 
 # Zadanie 1
 @app.route("/")
 def index():
     return render_template("index.html", imie="ksawier")
 
-# Zadanie 2
+# zadanie 1 - 07
 
-PRODUKTY = [
- {"id": 1, "nazwa": "Laptop", "cena": 2999, "dostepny": True},
- {"id": 2, "nazwa": "Mysz", "cena": 49, "dostepny": False},
- {"id": 3, "nazwa": "Klawiatura", "cena": 199, "dostepny": True},
-]
+
+class Produkt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nazwa = db.Column(db.String(100), nullable=False)
+    cena = db.Column(db.Float, nullable=False)
+    dostepny = db.Column(db.Boolean, default=True)
+
+    def __repr__(self):
+        return f"<Produkt {self.nazwa}>"
+
+with app.app_context():
+    db.create_all()
+
+
 @app.route("/produkty")
 def produkty():
  return render_template("produkty.html", produkty=PRODUKTY)
