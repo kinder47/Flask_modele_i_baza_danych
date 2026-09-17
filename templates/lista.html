@@ -1,14 +1,25 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Sklep 4TP</title>
-</head>
-<body>
-    <ul>
-    {% for p in produkty %}
-     <li>{{ loop.index }}. {{ p }}</li>
-    {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+{% block tresc %}
+<h1>Produkty ({{ produkty|length }})</h1>
+{% if produkty %}
+<table>
+  {% for p in produkty %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>
+      <a href="{{ url_for('szczegoly', id=p.id) }}">{{ p.nazwa }}</a>
+    </td>
+    <td>{{ p.cena }} zł</td>
+    <td>{% if not p.dostepny %}<b>niedostępny</b>{% endif %}</td>
+    <td>
+      <form method="post" action="{{ url_for('usun', id=p.id) }}">
+        <button>Usuń</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Brak produktów. <a href="{{ url_for('dodaj') }}">Dodaj pierwszy</a>.</p>
+{% endif %}
+{% endblock %}

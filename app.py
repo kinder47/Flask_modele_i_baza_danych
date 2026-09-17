@@ -14,7 +14,7 @@ def index():
 # zadanie 1 - 07
 
 
-class Produkt(db.Model):
+class produkt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nazwa = db.Column(db.String(100), nullable=False)
     cena = db.Column(db.Float, nullable=False)
@@ -23,19 +23,33 @@ class Produkt(db.Model):
     def __repr__(self):
         return f"<Produkt {self.nazwa}>"
 
-with app.app_context():
-    db.create_all()
-
-
-@app.route("/produkty")
-def produkty():
- return render_template("produkty.html", produkty=PRODUKTY)
-@app.route("/ceny")
-def ceny():
- return render_template("ceny.html", ceny={"Laptop": 2999, "Mysz": 49})
-@app.route("/lista")
+@app.route("/")
 def lista():
- return render_template("lista.html", produkty=["Laptop", "Mysz", "Klawiatura"])
+    produkty = Produkt.query.order_by(Produkt.nazwa).all()
+    return render_template("lista.html", produkty=produkty)
+
+@app.route("/produkt/<int:id>")
+def szczegoly(id):
+    p = Produkt.query.get_or_404(id)
+    return render_template("produkt.html", p=p)
+
+@app.route("/dodaj", methods=["GET", "POST"])
+def dodaj():
+    if request.method == "POST":
+        p = Produkt(nazwa=request.form["nazwa"],
+                    cena=float(request.form["cena"]))
+        db.session.add(p)
+        db.session.commit()
+        return redirect(url_for("lista"))
+    return render_template("dodaj.html")
+
+@app.route("/usun/<int:id>", methods=["POST"])
+def usun(id):
+    p = Produkt.query.get_or_404(id)
+    db.session.delete(p)
+    db.session.commit()
+    return redirect(url_for("lista"))
+
 
 # zadanie 3
 
@@ -63,7 +77,8 @@ def dodaj():
         return redirect(url_for("produkty"))
     return render_template("dodaj.html")
 
-
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
